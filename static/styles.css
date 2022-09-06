@@ -1,0 +1,22 @@
+h1, h2, h3, p, span, a, ul, li, ol, dialog, h4, h5, span, select, html, body, header, footer, div {
+	font-family: 'Open Sans', sans-serif;
+}
+
+button {
+	border-radius: 4px 4px 4px 4px;
+	text-align: center;
+	padding: 4px;
+}
+
+.block {
+	display: block;
+}
+
+.mx-auto {
+    margin-right: auto!important;
+    margin-left: auto!important;
+}
+
+.maint-title {
+	margin-bottom: 1px !important;
+}
