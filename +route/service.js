@@ -6,6 +6,8 @@ async function service() {
 	setTimeout(() => {
 		if(!$rump.state.token) {
 			$("#login").show()
+		} else {
+			$("#logout").show()
 		}
 	}, 300)
 }
