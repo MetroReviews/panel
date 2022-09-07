@@ -3,3 +3,6 @@ git clone https://github.com/Infinitybotlist/rumpkit
 cp -rf rumpkit/* .
 rm -rf {README.md,mkrump.sh}
 rm -rf rumpkit
+
+npm i -g google-closure-compiler
+

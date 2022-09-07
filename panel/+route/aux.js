@@ -3,10 +3,10 @@
 var wsUp = false
 var startingWs = false;
 var wsFatal = false
-var restartCalled = false;
+var wsElevated = false
 
-var wsCache = {bots: new Map()}
-
+var wsCache = {}
+var wsUserInfo = {}
 var cachePkey = {bot: ["bots", "bot_id"]}
 
 var callbacks = {
@@ -27,20 +27,40 @@ var callbacks = {
             alert("nonce-err", "Whoa!", "This action is not quite supported at this time")
         } else if(data.e == "P") {
             debug("Silverpelt", "Ping event. Going home...")
-            $("#ws-info").text(`Websocket still connected as of ${Date()}`)
+            $("#nav").text(`Websocket still connected as of ${Date()}`)
         } 
+    },
+    "@me": (data) => {
+	info("Dispatcher", "Got @me data, applying to wsUserInfo")
+	wsUserInfo = data.member
+    },
+    "event_keys": (data) => {
+	info("Dispatcher", "Got event keys, applying to cachePkey")
+	cachePkey = data.keys
     },
     "large_dispatch": (data) => {
 	let pk = cachePkey[data.n]
 	wsCache[pk[0]] = new Map();
 	setStatus(`Loading ${data.count} ${pk[0]}...`)
     },
+    "end_large_dispatch": (data) => {
+	let pk = cachePkey[data.n]
+	setStatus(`Loaded ${wsCache[pk[0]].size} ${pk[0]}. Waiting for server to dispatch more`)
+    },
     "dispatch": (data) => {
-	info("Dispatcher", "Got batch dispatch", data)
+	info("Dispatcher", "Got batch dispatch. Applying to cache...")
 	let cacheKey = cachePkey[data.n]
 	data.batch.forEach((e) => {
 		wsCache[cacheKey[0]].set(e[cacheKey[1]], e)
 	})
+    },
+    "ready": (data) => {
+	info("Dispatcher", "Got ready event, calling service")
+	initPanel()
+    },
+    "conn_elevated": (data) => {
+	info("Dispatcher", "Got conn_elevated event")
+	wsElevated = true
     }
 }
 
@@ -96,7 +116,7 @@ function restartWsUntilUp() {
 
 async function wsSend(data, lazy = false) {
     data.lazy = lazy
-    info("Sending {ws}")
+    info("WS", "Sending {ws}")
     _worker.postMessage(data)
 }
 

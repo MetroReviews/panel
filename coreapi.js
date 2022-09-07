@@ -67,8 +67,6 @@ const log = (...args) => {
     }
 })
 
-
-
 // Simple polyfill for promisify and sleep
 const promisify = f => (...args) => new Promise((a,b)=>f(...args, (err, res) => err ? b(err) : a(res)));
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -83,6 +81,11 @@ function tryReturn(f, ...args) {
 	}
 }
 
+// Public API to replace current url without reload, pass empty string to use currentPathInfo.url
+function setAddressBar(url = "") {
+	window.history.replaceState({"prev": window.location.href}, "Panel", url || currentPathInfo.url);
+}
+
 // Public API to send critical errors
 function error(...args) {
 	console.error(...args)
@@ -94,9 +97,12 @@ function setStatus(text) {
 	document.querySelector("#status").innerHTML = marked.marked(text)
 }
 
-// Public API to set main body
+// Public API to set main body, special variables are unwrapped as well
+// $n => unwraps to a nonce
+// $data => unwraps to ``currentPathInfo.data``
 function setBody(text) {
-        document.querySelector("#body").innerHTML = marked.marked(text)
+	let n = Math.floor(Math.random() * 100000);
+        document.querySelector("#body").innerHTML = marked.marked(text.replaceAll("$data", currentPathInfo.data).replaceAll("$n", n))
 	setStatus("")
 }
 
@@ -139,7 +145,8 @@ function getPathInfo(path) {
 	return {
 		service: `${path}/+route/service.js`,
 		aux: `${path}/+route/aux.js`, // Auxillary data
-		data: `${path}/+data`
+		data: `${path}/+data`,
+		url: path
 	}
 }
 
