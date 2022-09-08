@@ -65,7 +65,7 @@ var callbacks = {
 }
 
 // Load in web worker
-var _worker = new Worker(`${currentPathInfo.data}/worker.js?v=12`)
+var _worker = new Worker(`${currentPathInfo.data}/worker.min.js?v=12`)
 _worker.onmessage = function (event) {
     if(typeof event.data === "string" || event.data instanceof String) {
         if(event.data == "fatal") {
