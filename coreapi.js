@@ -3,15 +3,32 @@
 let alerts = []
 let intervals = []
 
-// Session class (login etc)
+// Chain api
+class Chain {
+	constructor() {
+		this.funcs = []
+	}
 
-// session (not just state data
+	async call() {
+		for(let i = 0; i < this.funcs.length; i++) {
+			let res = await this.funcs[i]();
+			if(!res) {
+				return false
+			}
+		}
+	}
 
+	add(f) {
+		this.funcs.push(f)
+	}
+}
+
+// Main rump class (session)
 class Session {
 	constructor() {
 		// Core variables
 		this.title = null
-		this.middleware = null
+		this.middleware = new Chain()
 		this.service = null 
 		this.firstload = null
 		this.path = null
@@ -243,11 +260,9 @@ async function loadService(path) {
 	setStatus("")
 
 	// Call the middleware+service
-	if($rump.middleware) {
-		let res = await $rump.middleware()
-		if(!res) {
-			return
-		}
+	let res = await $rump.middleware.call()
+	if(!res) {
+		return
 	}
 	await $rump.service()
 
