@@ -4,6 +4,7 @@ var wsUp = false
 var startingWs = false;
 var wsFatal = false
 var wsElevated = false
+var restartCalled = false
 
 var wsCache = {}
 var wsUserInfo = {}
@@ -65,7 +66,7 @@ var callbacks = {
 }
 
 // Load in web worker
-var _worker = new Worker(`${currentPathInfo.data}/worker.min.js?v=12`)
+var _worker = new Worker(`${currentPathInfo.data}/worker.min.js?v=15`)
 _worker.onmessage = function (event) {
     if(typeof event.data === "string" || event.data instanceof String) {
         if(event.data == "fatal") {
@@ -110,7 +111,7 @@ function restartWsUntilUp() {
 			clearInterval(_c)
 			return
 		}
-		await startSetup()
+		await startSetup(true)
 	}, 3000)
 }
 
@@ -141,13 +142,13 @@ async function wsStart() {
 }
 
 // Setup ws
-async function startSetup() {
+async function startSetup(restart = false) {
     if(!$rump.state.token) {
 	return
     } else {
 	await _worker.postMessage(`ticket ${$rump.state.token}`)
     }
-    _worker.postMessage("setup")
+    _worker.postMessage(`setup ${restart}`)
 }
 
 setTimeout(startSetup, 100)
