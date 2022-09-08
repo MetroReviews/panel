@@ -1,6 +1,6 @@
-title = "Admin Panel"
+$rump.title = "Admin Panel"
 
-async function service() {
+$rump.service = async () => {
 	// Everything else will be done by initPanel post-WS connection
 	setAddressBar()
 }

@@ -66,7 +66,7 @@ var callbacks = {
 }
 
 // Load in web worker
-var _worker = new Worker(`${currentPathInfo.data}/worker.min.js?v=15`)
+var _worker = new Worker(`${$rump.path.data}/worker.min.js?v=15`)
 _worker.onmessage = function (event) {
     if(typeof event.data === "string" || event.data instanceof String) {
         if(event.data == "fatal") {

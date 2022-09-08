@@ -7,12 +7,14 @@ import os, shutil, uuid, json, sys, errno, traceback
 def run_fast_scandir(dir):    # dir: str
     subfolders, files = [], []
 
-    for f in os.scandir(dir):
-        if f.is_dir():
-            subfolders.append(f.path)
-        if f.is_file():
-            files.append(f.path)
-
+    try:
+        for f in os.scandir(dir):
+            if f.is_dir():
+                subfolders.append(f.path)
+            if f.is_file():
+                files.append(f.path)
+    except FileNotFoundError:
+        return [], []
 
     for dir in list(subfolders):
         sf, f = run_fast_scandir(dir)
@@ -20,7 +22,9 @@ def run_fast_scandir(dir):    # dir: str
         files.extend(f)
     return subfolders, files
 
-def mkdir(folder, exists_ok = True):
+def mkdir(folder, exists_ok = True, no_del = False):
+    if no_del and os.path.exists(folder):
+        return
     try:
         os.system(f"rm -rvf {folder}")
     except Exception as exc:
@@ -93,6 +97,21 @@ rump = RumpCommand()
 def build():
     mkdir("out", exists_ok=True)
 
+    _, modules = run_fast_scandir("mods")
+
+    os.system("cp -rvf coreapi.js out/coreapi.mod.js")
+
+    for module in modules:
+        print("Adding module", module, "to coreapi.js")
+        with open("out/coreapi.mod.js") as f:
+            js = f.read()
+
+        with open(module) as modf:
+            mod = modf.read()
+
+        with open("out/coreapi.mod.js", "w") as f:
+            f.write(js + f"\n\n// {module}\n" + mod)
+
     subfolders, files = run_fast_scandir("..")
 
     files_b = files
@@ -125,7 +144,7 @@ def build():
         if f"{subfolder}/+route" in subfolders:
             print("Adding", subfolder.replace(f"../", "", 1).replace(cwd, "", 1) or "/")
             parsed_subfolder = subfolder.replace(f"../", "", 1).replace(cwd, "", 1) or "/"
-            mkdir(f"out{parsed_subfolder}", exists_ok=True)
+            mkdir(f"out{parsed_subfolder}", exists_ok=True, no_del=True)
             mkdir(f"out{parsed_subfolder}/+route", exists_ok=True)
             mkdir(f"out{parsed_subfolder}/+data", exists_ok=True)
             shutil.copy2(f"{tmpid}", f"out{parsed_subfolder}/index.html")
@@ -159,11 +178,20 @@ def build():
     os.system("cp -rf static out")
 
     print("BUILD: Attempting to minify .js files")
+    
+    print("Minifying+optimizing coreapi.js")
+    os.system("google-closure-compiler --js out/coreapi.mod.js --js_output_file out/coreapi.min.js")
+    #os.system("rm -rf out/coreapi.mod.js")
 
     for file in files:
         if "../" + cwd not in file:
             continue
+        
         _file = file.replace(f"../", "", 1).replace(cwd, "", 1).replace("/", "", 1)
+        
+        if _file == "coreapi.js":
+            continue
+
         if _file.endswith(".js") and not _file.endswith(".min.js"):
             print("Minifying+optimizing", _file)
             os.system(f"google-closure-compiler --js {_file} --js_output_file out/{rreplace(_file, '.js', '.min.js', 1)}")

@@ -1,6 +1,6 @@
-title = "Login"
+$rump.title = "Login"
 
-async function service() {
+$rump.service = async () => {
 	setStatus("Logging you in... in 3...")
 
 	let sp = new URLSearchParams(window.location.search)

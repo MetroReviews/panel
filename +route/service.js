@@ -1,6 +1,6 @@
-title="Metro Reviews Staff Panel"
+$rump.title = "Metro Reviews Staff Panel"
 
-async function service() {
+$rump.service = async () => {
 	await commonService()
 
 	setTimeout(() => {
