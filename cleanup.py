@@ -37,6 +37,6 @@ for file in files:
     if _file.endswith(".min.js"):
         print(_file)
         silentremove(_file)
-    if "index.html" in _file and not file.startswith("template"):
+    if "index.html" in _file and not _file.startswith("template"):
         print(_file)
         silentremove(_file)

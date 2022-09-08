@@ -143,8 +143,8 @@ function getPathInfo(path) {
 	}
 
 	return {
-		service: `${path}/+route/service.js`,
-		aux: `${path}/+route/aux.js`, // Auxillary data
+		service: `${path}/+route/service.min.js`,
+		aux: `${path}/+route/aux.min.js`, // Auxillary data
 		data: `${path}/+data`,
 		url: path
 	}
