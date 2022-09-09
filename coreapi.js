@@ -16,6 +16,7 @@ class Chain {
 				return false
 			}
 		}
+		return true
 	}
 
 	add(f) {
