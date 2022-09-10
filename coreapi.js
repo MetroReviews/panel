@@ -207,7 +207,10 @@ function _linkMod() {
                 // Now add some special code
                 window.history.pushState(window.location.pathname, 'Loading...', link.href);
                 handler = async () => {
-                    $(".active").toggleClass("active")
+		    let activeEls = document.querySelectorAll(".active")
+		    for(let i = 0; i < activeEls.length; i++) {
+			activeEls.classList.toggle("active")
+		    }
                     await loadService(link.href)
                 }
 
@@ -322,7 +325,7 @@ function alert(id, title, content) {
             intervals.splice(intervals.indexOf(interval), 1)
         })
     }
-    $("#alert-placer").html(`
+    document.querySelector("#alert-placer").innerHTML = `
 <dialog
     id="${id}"
     open
@@ -406,12 +409,12 @@ block {
     display: block;
 }
 </style>
-    `)
+    `
 }
 
 function closeAlert() {
     alerts.forEach(id => {
-        $(`#${id}`).remove()
+        document.querySelector(`#${id}`).remove()
         alerts.splice(alerts.indexOf(id), 1)
     })
 }

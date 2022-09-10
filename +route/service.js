@@ -5,9 +5,9 @@ $rump.service = async () => {
 
 	setTimeout(() => {
 		if(!$rump.state.token) {
-			$("#login").show()
+			document.querySelector("#login").style.display = "block"
 		} else {
-			$("#logout").show()
+			document.querySelector("#logout").style.display = "block"
 		}
 	}, 300)
 }

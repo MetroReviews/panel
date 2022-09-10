@@ -28,7 +28,7 @@ var callbacks = {
             alert("nonce-err", "Whoa!", "This action is not quite supported at this time")
         } else if(data.e == "P") {
             debug("Silverpelt", "Ping event. Going home...")
-            $("#nav").text(`Websocket still connected as of ${Date()}`)
+            document.querySelector("#nav").innerText = `Websocket still connected as of ${Date()}`
         } 
     },
     "@me": (data) => {

@@ -189,7 +189,7 @@ def build():
         
         _file = file.replace(f"../", "", 1).replace(cwd, "", 1).replace("/", "", 1)
         
-        if _file == "coreapi.js":
+        if _file == "coreapi.js" or _file == "out/coreapi.mod.js":
             continue
 
         if _file.endswith(".js") and not _file.endswith(".min.js"):
