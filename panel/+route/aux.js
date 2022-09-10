@@ -57,7 +57,8 @@ var callbacks = {
     },
     "ready": (data) => {
 	info("Dispatcher", "Got ready event, calling service")
-	initPanel()
+	
+	setTimeout(() => initPanel(), 400)
     },
     "conn_elevated": (data) => {
 	info("Dispatcher", "Got conn_elevated event")
